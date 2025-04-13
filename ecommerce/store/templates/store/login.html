@@ -1,0 +1,27 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="content">
+    <div class="the-form">
+        <h1>Log in</h1>
+        <h5 class="mb-3">and find your next fresh pair !</h5>
+        <form action="" method="POST">
+            {% csrf_token %}  <!-- CSRF protection -->
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="EMAIL*" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" placeholder="PASSWORD*" id="password" name="password" required>
+            </div>
+            <div class="mb-2">
+                <button type="submit" class="btn-signup">Log in</button>
+            </div>
+            <p>Not a member?<a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'signup' %}"> Sign up now</a></p>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

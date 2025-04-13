@@ -1,0 +1,51 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<section class="text-catalog" style="margin-top: 75px;">
+    <h1>Discover here</h1>
+    <p>Looking for stylish sneakers? Supa Snika makes it easy to find your perfect pair.</p>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" placeholder="Search for sneakers..." class="search-bar">
+        <button class="search-button">Search</button>
+    </div>
+</section>
+
+<section class="product-container">
+    <div class="product-card">
+        <img src="{% static 'images/sneaker_catalog_1.jpg' %}" alt="Sneaker 1" class="product-img">
+        <h2>Sneaker 1</h2>
+        <span>RM449</span>
+        <button class="add_to-button">+</button>
+    </div>
+    <div class="product-card">
+        <img src="{% static 'images/sneaker_catalog_2.jpg' %}" alt="Sneaker 2" class="product-img">
+        <h2>Sneaker 2</h2>
+        <span>RM449</span>
+        <button class="add_to-button">+</button>
+    </div>
+    <div class="product-card">
+        <img src="{% static 'images/sneaker_catalog_3.jpg' %}" alt="Sneaker 3" class="product-img">
+        <h2>Sneaker 3</h2>
+        <span>RM449</span>
+        <button class="add_to-button">+</button>
+    </div>
+    <div class="product-card">
+        <img src="{% static 'images/sneaker_catalog_4.jpg' %}" alt="Sneaker 4" class="product-img">
+        <h2>Sneaker 4</h2>
+        <span>RM449</span>
+        <button class="add_to-button">+</button>
+    </div>
+    <div class="product-card">
+        <img src="{% static 'images/sneaker_catalog_5.jpg' %}" alt="Sneaker 5" class="product-img">
+        <h2>Sneaker 5</h2>
+        <span>RM449</span>
+        <button class="add_to-button">+</button>
+    </div>
+</section>
+
+{% endblock content %}

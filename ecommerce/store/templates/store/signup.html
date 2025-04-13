@@ -1,0 +1,39 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Content -->
+<div class="content">
+        <div class="the-form">
+            <h1>Sign Up</h1>
+          <form action="" method="POST">
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="EMAIL*" id="email" name="email" required>
+              </div>
+              <div class=" mb-3 row">
+                <div class="col">
+                    <input type="text" class="form-control" id="firstName" placeholder="FIRST NAME*">
+                </div>
+               <div class="col">
+                    <input type="text" class="form-control" id="lastName" placeholder="LAST NAME*">
+               </div>
+            </div>
+              <div class="mb-3">
+                <input type="text" class="form-control" placeholder="USERNAME*" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="PASSWORD*" id="password" name="password" required>
+            </div>
+              <div class="mb-3">
+                <input type="password" class="form-control" placeholder="CONFIRM PASSWORD*" id="confirm_password" name="confirm_password" required>
+             </div>
+              <div class="mb-2">
+            <button type="submit" class="btn-signup">Sign Up</button>
+              </div>
+              <p>Already have an account?<a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'login' %}"> Login now</a></p>
+          </form>
+        </div>
+    </div>
+
+{% endblock content %}

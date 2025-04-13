@@ -1,0 +1,289 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    body {
+        margin: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    main {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hero-section {
+        padding: 3rem 0;
+        height: auto;
+    }
+
+    .welcome-text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: auto;
+        margin-bottom: 2rem;
+    }
+
+    .slider-dimensions {
+        width: 100%;
+        aspect-ratio: 3/2;
+        max-height: 70vh;
+    }
+
+    .slider-container {
+        position: relative;
+        overflow: hidden;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        max-width: 100%;
+    }
+
+    .slider {
+        position: absolute;
+        display: flex;
+        transform: translateX(0%);
+        transition: transform 1s;
+        width: 100%;
+        height: 100%;
+    }
+
+    .slider > div {
+        min-width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .nav-container {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    .index-container {
+        display: flex;
+        gap: 8px;
+    }
+
+    .index-container button {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: none;
+        background-color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .index-container button.active {
+        background-color: white;
+        transform: scale(1.2);
+    }
+
+    .nav-arrows {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        box-sizing: border-box;
+        pointer-events: none; /* Allow clicks to pass through */
+        z-index: 5;
+    }
+
+    .nav-arrow-btn {
+        background-color: rgba(0, 0, 0, 0.2);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+
+    .nav-arrow-btn.prev {
+        transform: translateX(-10px);
+    }
+
+    .nav-arrow-btn.next {
+        transform: translateX(10px);
+    }
+
+    .slider-container:hover .nav-arrow-btn {
+        opacity: 0.7;
+        transform: translateX(0);
+    }
+
+    .nav-arrow-btn:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 1 !important;
+    }
+
+    @media (max-width: 768px) {
+        .slider-dimensions {
+            aspect-ratio: 4/3;
+            max-height: 50vh;
+        }
+
+        .nav-arrow-btn {
+            width: 35px;
+            height: 35px;
+        }
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<!-- Content -->
+<div class="m-4 p-4">
+    <div class="row hero-section align-items-center">
+        <!-- Left column with welcome text -->
+        <div class="col-md-5 welcome-text">
+            <h1>Welcome to <br>SUPA SNIKA</h1>
+            <p>Whether you're chasing the latest drops or hunting for timeless classics, we've got you covered.
+                At Supa Snika, passion meets innovation to deliver an unforgettable shopping journey—one step at a time.</p>
+
+                <p>Explore our collection of sneakers and find your perfect pair today!</p>
+                <div class="d-flex justify-content-center mb-2">
+                    <a href="#" class="btn btn-dark btn-lg"><b>SHOP NOW</b></a>
+                </div>
+        </div>
+
+        <!-- Right column with image slider -->
+        <div class="col-md-7">
+            <div class="slider-container slider-dimensions">
+                <div class="slider">
+                    <div class="slider-dimensions" data-img-url="{% static 'images/shoes_display_1.jpg' %}"></div>
+                    <div class="slider-dimensions" data-img-url="{% static 'images/shoes_display_2.jpg' %}"></div>
+                    <div class="slider-dimensions" data-img-url="{% static 'images/shoes_display_3.jpg' %}"></div>
+                    <div class="slider-dimensions" data-img-url="{% static 'images/shoes_display_4.jpg' %}"></div>
+                    <div class="slider-dimensions" data-img-url="{% static 'images/shoes_display_5.jpg' %}"></div>
+                </div>
+
+                <!-- Dot indicators -->
+                <div class="nav-container">
+                    <div class="index-container">
+                        <button class="active" data-index="0"></button>
+                        <button data-index="1"></button>
+                        <button data-index="2"></button>
+                        <button data-index="3"></button>
+                        <button data-index="4"></button>
+                    </div>
+                </div>
+
+                <!-- Arrow navigation that appears on hover -->
+                <div class="nav-arrows">
+                    <button class="nav-arrow-btn prev" data-index-change="-1">&#10094;</button>
+                    <button class="nav-arrow-btn next" data-index-change="1">&#10095;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const imgs = document.querySelectorAll('[data-img-url]');
+        const slider = document.querySelector('.slider');
+        const indexButtons = document.querySelectorAll('.index-container button');
+        const navButtons = document.querySelectorAll('.nav-arrow-btn');
+        let currentIndex = 0;
+        let autoSlideInterval;
+
+        // Set background images
+        imgs.forEach((div) => {
+            div.style.backgroundImage = `url(${div.getAttribute('data-img-url')})`;
+        });
+
+        // Function to update slider position
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+            // Update active button
+            indexButtons.forEach((btn, index) => {
+                if (index === currentIndex) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Add click handlers for index buttons
+        indexButtons.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                currentIndex = index;
+                updateSlider();
+                resetAutoSlide();
+            });
+        });
+
+        // Add click handlers for navigation buttons
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const change = parseInt(btn.getAttribute('data-index-change'));
+                currentIndex = (currentIndex + change + imgs.length) % imgs.length;
+                updateSlider();
+                resetAutoSlide();
+            });
+        });
+
+        // Start auto-slide
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % imgs.length;
+                updateSlider();
+            }, 5000);
+        }
+
+        // Reset auto-slide timer when user interacts
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        // Pause auto-slide when hovering over slider
+        const sliderContainer = document.querySelector('.slider-container');
+        sliderContainer.addEventListener('mouseenter', () => {
+            clearInterval(autoSlideInterval);
+        });
+
+        sliderContainer.addEventListener('mouseleave', () => {
+            startAutoSlide();
+        });
+
+        // Initialize auto-slide
+        startAutoSlide();
+    });
+
+</script>
+{% endblock content %}
