@@ -1,0 +1,136 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+  <h2 class="text-center mb-4">Upload or Paste Your Sneaker Image</h2>
+
+  <!-- Upload Form -->
+  <form id="upload-form" method="POST" enctype="multipart/form-data" class="border rounded p-4 shadow-sm bg-light">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="image-upload" class="form-label">Choose an image:</label>
+      <input type="file" accept="image/*" class="form-control" id="image-upload" name="image">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Or paste a screenshot (Ctrl + V):</label>
+      <div id="paste-area" class="border border-secondary rounded p-3 text-muted text-center" style="height: 200px;">
+        Paste your image here
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-dark px-4">Get Outfit Recommendation ✨</button>
+    </div>
+  </form>
+
+  <!-- Display Area -->
+  <div class="mt-5">
+    <h4 class="mb-3">Recommended Outfit</h4>
+    <div id="recommendation-box" class="border p-4 bg-white shadow-sm rounded">
+
+      {% if image_preview_url %}
+        <div class="text-center mb-4">
+          <h5>Your Uploaded Sneaker:</h5>
+          {% if image_preview_url %}
+            <img src="{{ image_preview_url }}" alt="Uploaded sneaker" class="img-fluid mb-3" style="max-height: 200px;">
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if recommendation %}
+        {% if recommendation.error %}
+          <div class="alert alert-danger">{{ recommendation.error }}</div>
+        {% else %}
+          <div class="mb-4">
+            <h5>Sneaker Detected Color: <span class="badge bg-dark text-white">{{ recommendation.shoe_color }}</span></h5>
+          </div>
+
+          {% for category, items in recommendation.categories.items %}
+            <h5 class="mt-4">{{ category }}</h5>
+            <div class="row">
+             {% for item in items %}
+                <div class="col-md-4 mb-3">
+                  <div class="card h-100 shadow-sm">
+                    <img src="{{ item.static_path }}" class="card-img-top" alt="{{ item.name }}">
+                    <div class="card-body">
+                      <h6 class="card-title">
+                        {{ category }} #{{ forloop.counter }}
+                      </h6>
+                      <p class="card-text">
+                        Match Score: {{ item.score|floatformat:2 }}%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% else %}
+        <p class="text-muted">Your outfit recommendation will appear here after uploading an image.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  #paste-area {
+    background-color: #fdfdfd;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  #paste-area img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: auto;
+  }
+
+  #recommendation-box {
+    min-height: 150px;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const pasteArea = document.getElementById('paste-area');
+  const uploadForm = document.getElementById('upload-form');
+  const fileInput = document.getElementById('image-upload');
+
+  pasteArea.addEventListener('paste', function (e) {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+
+        // Update preview
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const img = document.createElement('img');
+          img.src = event.target.result;
+          pasteArea.innerHTML = '';
+          pasteArea.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+
+        // Create a DataTransfer to simulate file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+      }
+    }
+  });
+});
+</script>
+
+{% endblock content %}
+
+{% block footer %}
+<footer class="footer">
+          <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+          <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+</footer>
+{% endblock footer %}

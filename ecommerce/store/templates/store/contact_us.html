@@ -1,0 +1,119 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    body {
+        background-color: #f7f1ec;
+    }
+
+    .contact-section {
+        padding: 60px 20px;
+    }
+
+    .contact-section .form-control,
+    .contact-section textarea.form-control {
+        background-color: #d7cdc8;
+        border: none;
+        border-radius: 4px;
+        color: #000;
+        font-size: 14px;
+    }
+
+    .contact-section textarea.form-control {
+        resize: vertical;
+        height: 120px;
+    }
+
+    .btn-submit {
+        background-color: #2c1e1b;
+        color: white;
+        border-radius: 20px;
+        padding: 10px 25px;
+        font-weight: bold;
+        border: none;
+    }
+
+    .btn-submit:hover {
+        background-color: #1e1412;
+    }
+
+    .contact-info p {
+        font-style: italic;
+        color: #555;
+    }
+
+    .contact-info a {
+        color: #3a2c2a;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
+
+<div class="d-flex flex-column justify-content-center" style="min-height: 100vh;">
+    {% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+<div class="container contact-section">
+    <div class="row g-4">
+        <div class="col-md-5 contact-info">
+            <h2>Contact Us</h2>
+            <p>For any inquiries or orders, please do not hesitate to get in touch with us! Our team would be happy to assist you.</p>
+            <p><strong>E-mail:</strong><br>
+                <a href="mailto:supasnikka@gmail.com">supasnikka@gmail.com</a>
+            </p>
+        </div>
+
+        <div class="col-md-7">
+            <form method="POST" action="{% url 'contact' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="name" placeholder="NAME" required>
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" name="email" placeholder="E-MAIL" required>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="subject" placeholder="SUBJECT">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" name="message" placeholder="MESSAGE" required></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-submit">SUBMIT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+  // Auto-dismiss alert after 3 seconds
+  setTimeout(function () {
+    let alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      // Bootstrap 5 fade out
+      alert.classList.remove('show');
+      alert.classList.add('fade');
+      setTimeout(() => alert.remove(), 500); // Remove from DOM
+    });
+  }, 3000); // 3 seconds
+</script>
+
+{% endblock content %}
+
+{% block footer %}
+<footer class="footer">
+    <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+    <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+</footer>
+{% endblock footer %}

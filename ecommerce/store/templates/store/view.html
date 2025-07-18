@@ -1,0 +1,124 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+
+  <!-- Product Section -->
+  <div class="row g-5 align-items-center">
+    <!-- Sneaker Image -->
+    <div class="col-lg-6 text-center">
+      <img src="{{ sneaker.imageURL }}" alt="{{ sneaker.sneaker_name }}" class="img-fluid rounded shadow">
+    </div>
+
+    <!-- Sneaker Details -->
+    <div class="col-lg-6">
+      <p class="text-muted mb-1">SKU: {{ sneaker.id }}</p>
+      <h2 class="fw-bold">{{ sneaker.sneaker_name }}</h2>
+      <h4 class="text-muted mb-4">RM{{ sneaker.sneaker_price|floatformat:2 }}</h4>
+
+      <!-- Sneaker Sizes -->
+      <div class="mb-3">
+        <label for="size" class="form-label fw-semibold">Select Size:</label>
+        <select id="size" class="form-select" name="selected_size" required>
+          <option value="" disabled selected>Choose size</option>
+          {% for sneaker_size in sneaker_sizes %}
+            {% if sneaker_size.stock > 0 %}
+              <option value="{{ sneaker_size.id }}">
+                Size {{ sneaker_size.size.label }} — {{ sneaker_size.stock }} in stock
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Add to Cart Button -->
+      {% if user.is_authenticated %}
+        <button data-product="{{ sneaker.id }}" data-action="add"
+                class="btn btn-dark update-cart mt-2" disabled>
+          Add to Cart
+        </button>
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-dark mt-2">
+          Login to Purchase
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <hr class="my-5">
+
+  <!-- Outfit Recommendation -->
+  <div class="row">
+    <div class="col-12">
+      <h4 class="mb-4">AI Outfit Recommendation</h4>
+
+      <div class="p-4 bg-light rounded shadow-sm">
+        {% if recommendation %}
+          {% if recommendation.error %}
+            <div class="alert alert-danger">{{ recommendation.error }}</div>
+          {% else %}
+            {% if image_preview_url %}
+              <div class="text-center mb-4">
+                <p class="fw-semibold mb-1">Sneaker Color:</p>
+                <span class="badge bg-dark text-white fs-6">{{ recommendation.shoe_color }}</span>
+                <p class="mt-3">Analyzed Sneaker:</p>
+                <img src="{{ image_preview_url }}" class="img-fluid rounded" style="max-height: 200px;">
+              </div>
+            {% endif %}
+
+            {% for category, items in recommendation.categories.items %}
+              <h5 class="mt-4">{{ category }}</h5>
+              <div class="row">
+                {% for item in items %}
+                  <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <img src="{{ item.static_path }}" class="card-img-top" alt="{{ item.name }}">
+                      <div class="card-body">
+                        <h6 class="card-title">{{ category }} #{{ forloop.counter }}</h6>
+                        <p class="card-text">
+                          Match Score: {{ item.score|floatformat:2 }}%
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% else %}
+          <p class="text-muted">No recommendations available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Enable "Add to Cart" only after selecting size
+  const sizeSelect = document.getElementById('size');
+  const addToCartBtn = document.querySelector('.update-cart');
+
+  if (sizeSelect && addToCartBtn) {
+    sizeSelect.addEventListener('change', function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const selectedSizeId = selectedOption.value;
+      const stockMatch = selectedOption.textContent.match(/(\d+) in stock/);
+      const stock = stockMatch ? parseInt(stockMatch[1]) : 99;
+
+      addToCartBtn.dataset.size = selectedSizeId;
+      addToCartBtn.dataset.stock = stock;
+      addToCartBtn.disabled = false;
+    });
+  }
+</script>
+{% endblock content %}
+
+{% block footer %}
+<footer class="footer mt-5">
+  <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+  <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+</footer>
+{% endblock footer %}

@@ -3,37 +3,104 @@
 
 {% block content %}
 
-<!-- Content -->
-<div class="content">
-        <div class="the-form">
-            <h1>Sign Up</h1>
-          <form action="" method="POST">
-              <div class="mb-3">
-                <input type="text" class="form-control" placeholder="EMAIL*" id="email" name="email" required>
-              </div>
-              <div class=" mb-3 row">
-                <div class="col">
-                    <input type="text" class="form-control" id="firstName" placeholder="FIRST NAME*">
-                </div>
-               <div class="col">
-                    <input type="text" class="form-control" id="lastName" placeholder="LAST NAME*">
-               </div>
-            </div>
-              <div class="mb-3">
-                <input type="text" class="form-control" placeholder="USERNAME*" id="username" name="username" required>
-            </div>
+{% if otp_redirect %}
+<script>
+    window.open("{% url 'verify_otp' customer_id %}", '_blank');
+</script>
+{% endif %}
+
+<!-- Sign Up Form -->
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="the-form" style="max-width: 500px;">
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <div class="alert alert-danger">
+                {% else %}
+                    <div class="alert alert-{{ message.tags }}">
+                {% endif %}
+                    {{ message }}
+                    </div>
+            {% endfor %}
+        {% endif %}
+
+        <h1 class="h3 text-center mb-3">Sign Up</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
             <div class="mb-3">
-                <input type="text" class="form-control" placeholder="PASSWORD*" id="password" name="password" required>
+                <input type="email" class="form-control" placeholder="EMAIL*" id="email" name="email" required>
             </div>
-              <div class="mb-3">
+
+            <div class="row g-3 mb-3">
+                <div class="col">
+                    <input type="text" class="form-control" id="firstName" placeholder="FIRST NAME*" name="first_name" required>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="lastName" placeholder="LAST NAME*" name="last_name" required>
+                </div>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <input type="password" class="form-control" placeholder="PASSWORD*" id="password" name="password" required>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3" onclick="togglePassword('password', this)" style="cursor: pointer;">
+                    <i class="bi bi-eye-slash" id="password-icon"></i>
+                </span>
+            </div>
+
+            <div class="mb-3 position-relative">
                 <input type="password" class="form-control" placeholder="CONFIRM PASSWORD*" id="confirm_password" name="confirm_password" required>
-             </div>
-              <div class="mb-2">
-            <button type="submit" class="btn-signup">Sign Up</button>
-              </div>
-              <p>Already have an account?<a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'login' %}"> Login now</a></p>
-          </form>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3" onclick="togglePassword('confirm_password', this)" style="cursor: pointer;">
+                    <i class="bi bi-eye-slash" id="confirm-password-icon"></i>
+                </span>
+            </div>
+
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-dark">Sign Up</button>
+            </div>
+
+            <p class="text-center">
+                Already have an account?
+                <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'login' %}">Login now</a>
+            </p>
+            </form>
         </div>
     </div>
+</div>
+
+<script>
+    setTimeout(function() {
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => alert.style.display = 'none');
+    }, 4000);  // 4 seconds
+</script>
+
+<script>
+function togglePassword(inputId, iconElement) {
+    const input = document.getElementById(inputId);
+    const icon = iconElement.querySelector('i');
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    }
+}
+</script>
 
 {% endblock content %}
+
+{% block footer %}
+<footer class="footer">
+
+        <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+        <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+
+</footer>
+{% endblock footer %}

@@ -4,48 +4,130 @@
 {% block content %}
 
 <!-- Content -->
-<section class="text-catalog" style="margin-top: 75px;">
-    <h1>Discover here</h1>
-    <p>Looking for stylish sneakers? Supa Snika makes it easy to find your perfect pair.</p>
+<style>
+  .not-visible {
+  display: none;
+}
+</style>
+<!-- Text + Search -->
+<section class="text-catalog py-5 mt-5">
+  <div class="container text-center">
+    <h1 class="display-5 fw-bold mb-3">Discover here</h1>
+    <p class="lead text-muted mb-4">
+      Looking for stylish sneakers? <br>Supa Snika makes it easy to find your perfect pair.
+    </p>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" placeholder="Search for sneakers..." class="search-bar">
-        <button class="search-button">Search</button>
+    <!-- Search Form & Live Results -->
+    <div class="position-relative d-flex justify-content-center">
+      <div class="search-wrapper" style="width: 100%; max-width: 550px;">
+        <form id="search-form" method="GET" action="" class="d-flex">
+          {% csrf_token %}
+          <input
+            id="search-input"
+            type="text"
+            name="q"
+            placeholder="Search for sneakers..."
+            class="form-control me-2"
+            autocomplete="off"
+            required
+          />
+        </form>
+
+        <!-- Live Results Show Here -->
+        <div id="results-box"
+             class="bg-white border mt-2 p-3 shadow rounded not-visible"
+             style="position: absolute; z-index: 1000; width: 100%; max-width: 540px;">
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<section class="product-container">
-    <div class="product-card">
-        <img src="{% static 'images/sneaker_catalog_1.jpg' %}" alt="Sneaker 1" class="product-img">
-        <h2>Sneaker 1</h2>
-        <span>RM449</span>
-        <button class="add_to-button">+</button>
+<!-- Products Grid -->
+<section>
+  <div class="container">
+    <div class="row">
+      {% for sneaker in products %}
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+          <div class="card shadow-sm h-100 d-flex flex-column">
+            <img src="{{sneaker.imageURL}}"
+                 class="card-img-top"
+                 style="height: 160px; object-fit: contain;"
+                 alt="{{ sneaker.sneaker_name }}">
+            <div class="card-body d-flex flex-column justify-content-between p-2">
+              <div>
+                <h6 class="card-title mb-1">{{ sneaker.sneaker_name }}</h6>
+                <p class="text-muted small mb-1">{{ sneaker.brand }}</p>
+                <p class="fw-bold mb-2">RM {{ sneaker.sneaker_price }}</p>
+              </div>
+              <a href="{% url 'sneaker_detail' sneaker.id %}" class="btn btn-outline-dark btn-sm w-100 mt-auto">View</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col">
+          <p class="text-center w-100">No sneakers found.</p>
+        </div>
+      {% endfor %}
     </div>
-    <div class="product-card">
-        <img src="{% static 'images/sneaker_catalog_2.jpg' %}" alt="Sneaker 2" class="product-img">
-        <h2>Sneaker 2</h2>
-        <span>RM449</span>
-        <button class="add_to-button">+</button>
-    </div>
-    <div class="product-card">
-        <img src="{% static 'images/sneaker_catalog_3.jpg' %}" alt="Sneaker 3" class="product-img">
-        <h2>Sneaker 3</h2>
-        <span>RM449</span>
-        <button class="add_to-button">+</button>
-    </div>
-    <div class="product-card">
-        <img src="{% static 'images/sneaker_catalog_4.jpg' %}" alt="Sneaker 4" class="product-img">
-        <h2>Sneaker 4</h2>
-        <span>RM449</span>
-        <button class="add_to-button">+</button>
-    </div>
-    <div class="product-card">
-        <img src="{% static 'images/sneaker_catalog_5.jpg' %}" alt="Sneaker 5" class="product-img">
-        <h2>Sneaker 5</h2>
-        <span>RM449</span>
-        <button class="add_to-button">+</button>
-    </div>
+  </div>
 </section>
+
+<script>
+const searchInput = document.getElementById("search-input");
+const resultsBox = document.getElementById("results-box");
+
+const SearchPosts = async (query) => {
+  if (!query.trim()) {
+    resultsBox.classList.add("not-visible");
+    resultsBox.innerHTML = "";
+    return;
+  }
+
+  try {
+    const res = await fetch(`/live-search/?term=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error("Network response was not ok");
+
+    const data = await res.json();
+    resultsBox.innerHTML = "";
+
+    if (data.data.length > 0) {
+      data.data.forEach(item => {
+        const resultHTML = `
+          <a href="${item.url}" class="d-block text-decoration-none mb-2">
+            <div class="d-flex align-items-center">
+              <img src="${item.image}" alt="${item.name}" style="height: 40px; width: 40px; object-fit: cover; margin-right: 10px;">
+              <div>
+                <strong>${item.name}</strong><br>
+                <small class="text-muted">RM ${item.price}</small>
+              </div>
+            </div>
+          </a>`;
+        resultsBox.innerHTML += resultHTML;
+      });
+    } else {
+      resultsBox.innerHTML = '<p class="text-muted mb-0">No sneakers found.</p>';
+    }
+
+    resultsBox.classList.remove("not-visible");
+  } catch (error) {
+    console.error("Search error:", error);
+    resultsBox.innerHTML = '<p class="text-danger mb-0">Error fetching results.</p>';
+    resultsBox.classList.remove("not-visible");
+  }
+};
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value;
+  SearchPosts(query);
+});
+</script>
 
 {% endblock content %}
+
+{% block footer %}
+<footer class="footer">
+        <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+        <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+</footer>
+{% endblock footer %}

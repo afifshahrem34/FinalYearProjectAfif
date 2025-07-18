@@ -1,0 +1,151 @@
+{% extends 'store/menu.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content py-4 mt-4">
+    <div class="row g-4">
+        <!-- Checkout Form -->
+        <div class="col-12 col-lg-6">
+            <div class="cart-box-element" id="form-wrapper">
+                <form id="form" method="POST">
+                    <input type="hidden" name="transaction_id" id="transaction_id">
+                    {% csrf_token %}
+
+                    <!-- User Info -->
+                    <div id="user-info">
+                        <h5 class="mb-3 fw-semibold">Customer Information:</h5>
+                        <div class="form-field mb-3">
+                            <input class="form-control" type="text" name="name" placeholder="Name" value="{{ user.customer.name|default_if_none:'' }}" readonly>
+                        </div>
+                        <div class="form-field mb-3">
+                            <input class="form-control" type="email" name="email" placeholder="Email" value="{{ user.customer.email|default_if_none:'' }}" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Info -->
+                    <div id="shipping-info">
+                        <hr>
+                        <p class="fw-semibold">Shipping Information:</p>
+                        <hr>
+                        <div class="form mb-3">
+                            <input name="address" class="form-control" required placeholder="Address"
+                                value="{{ request.POST.address|default:previous_shipping.address|default_if_none:'' }}">
+                        </div>
+                        <div class="form-field mb-3">
+                            <input name="phone_number" class="form-control" required placeholder="Phone Number"
+                                value="{{ request.POST.phone_number|default:previous_shipping.phone_number|default_if_none:'' }}">
+                        </div>
+                        <div class="form-field mb-3">
+                            <input name="zipcode" class="form-control" required placeholder="Zip Code"
+                                value="{{ request.POST.zipcode|default:previous_shipping.zipcode|default_if_none:'' }}">
+                        </div>
+                        <div class="form-field mb-3">
+                            <input name="city" class="form-control" required placeholder="City"
+                                value="{{ request.POST.city|default:previous_shipping.city|default_if_none:'' }}">
+                        </div>
+                        <div class="form-field mb-3">
+                            <input name="state" class="form-control" required placeholder="State"
+                                value="{{ request.POST.state|default:previous_shipping.state|default_if_none:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <hr>
+                    <div class="form mb-3">
+                        <label class="form-label fw-semibold">Payment Method:</label>
+                        <select class="form-select" name="payment_method" required>
+                            <option value="" disabled selected>Select a payment method</option>
+                            <option value="COD">Cash on Delivery</option>
+                        </select>
+                    </div>
+
+                    <hr>
+                    <button id="form-button" class="btn btn-success w-100" type="submit">
+                        Place Order
+                    </button>
+                </form>
+
+                <!-- Spinner -->
+                <div id="loading" class="text-center mt-3" style="display: none;">
+                    <div class="spinner-border text-success" role="status"></div>
+                    <p class="mt-2">Processing your order...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-12 col-lg-6">
+            <div class="cart-box-element">
+                <a class="btn btn-outline-dark mb-3" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+                <hr>
+                <h3 class="mb-3">Order Summary</h3>
+                <hr>
+                {% for item in items %}
+                <div class="cart-row mb-3">
+                    <div style="flex:2"><img class="row-image" src="{{ item.item.imageURL }}" alt="{{ item.item.sneaker_name }}"></div>
+                    <div style="flex:2"><p>{{ item.item.sneaker_name }}, Size {{ item.selected_size.size.label }}</p></div>
+                    <div style="flex:1"><p>x{{ item.quantity }}</p></div>
+                    <div style="flex:1"><p>RM{{ item.item.sneaker_price|floatformat:2 }}</p></div>
+                </div>
+                {% endfor %}
+                <h5>Items: {{ order.get_cart_items }}</h5>
+                <h5>Total: RM<span id="order-total">{{ order.get_cart_total|floatformat:2 }}</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('form');
+    const transactionInput = document.getElementById('transaction_id');
+    const loading = document.getElementById('loading');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Confirm Order',
+            text: 'Are you sure you want to place this order?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, place order',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading spinner
+                loading.style.display = 'block';
+
+                // Random transaction number (0–9)
+                const randomTransaction = Math.floor(Math.random() * 10);
+                transactionInput.value = randomTransaction;
+
+                // Submit form with short delay to allow spinner to show
+                setTimeout(() => {
+                    form.submit();
+                }, 1000);
+            }
+        });
+    });
+
+    // After successful form POST, you can show "Purchase Complete" using Django redirect logic
+    {% if messages %}
+        {% for message in messages %}
+            Swal.fire({
+                title: 'Purchase Complete!',
+                text: '{{ message }}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        {% endfor %}
+    {% endif %}
+});
+</script>
+{% endblock content %}
+
+{% block footer %}
+<footer class="footer">
+    <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+    <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+</footer>
+{% endblock footer %}

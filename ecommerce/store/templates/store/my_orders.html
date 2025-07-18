@@ -1,0 +1,91 @@
+{% extends 'store/menu.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">My Orders</h2>
+    <hr class="my-4">
+
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Date & Time</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr data-bs-toggle="collapse" data-bs-target="#orderDetails{{ forloop.counter }}" aria-expanded="false" aria-controls="orderDetails{{ forloop.counter }}" style="cursor: pointer;">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ order.date_ordered|date:"d/m/Y H:i" }}</td>
+                    <td>RM{{ order.get_cart_total }}</td>
+                    <td><span class="badge bg-success">Complete</span></td>
+                    <td><i class="bi bi-caret-down-fill"></i> Click to view</td>
+                </tr>
+                <tr class="collapse" id="orderDetails{{ forloop.counter }}" style="border-bottom: 2px solid #000;">
+                    <td colspan="5">
+                        <ul class="list-group list-group-flush mb-0">
+                            {% for item in order.orderitem_set.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-start">
+                                    <img src="{{ item.item.imageURL }}" alt="{{ item.item.sneaker_name }}" class="me-3" style="width: 150px; height: auto; border-radius: 10px;">
+                                    <div>
+                                        <strong>{{ item.item.sneaker_name }}</strong><br>
+                                        Size: {{ item.selected_size.size.label }}<br>
+                                        Price: RM{{ item.item.sneaker_price }}
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    Quantity: {{ item.quantity }}<br>
+                                    Subtotal: RM{{ item.get_total }}
+                                </div>
+                            </li>
+                            {% endfor %}
+                            <li class="list-group-item">
+                                <strong>Shipping Address:</strong><br>
+                                {% with order.shippingaddress_set.first as shipping %}
+                                {% if shipping %}
+                                    {{ shipping.address }}, <br> {{ shipping.zipcode }}, {{ shipping.city }}, {{ shipping.state }}<br><br>
+                                    <strong>Phone:</strong> {{ shipping.phone_number }}
+                                {% else %}
+                                    <em>No shipping information available.</em>
+                                {% endif %}
+                                {% endwith %}
+                            </li>
+                            <li class="list-group-item text-end">
+                                <strong>Order ID:</strong> {{ order.id }}
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <p>You have no orders yet.</p>
+    {% endif %}
+
+    <!-- SweetAlert2 Script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% if messages %}
+        <script>
+        {% for message in messages %}
+            Swal.fire({
+                title: 'Purchase Complete!',
+                text: "{{ message|escapejs }}",
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        {% endfor %}
+        </script>
+    {% endif %}
+
+</div>
+{% endblock %}

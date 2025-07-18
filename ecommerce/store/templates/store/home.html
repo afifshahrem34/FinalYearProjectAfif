@@ -158,11 +158,13 @@
             height: 35px;
         }
     }
+
 </style>
 {% endblock extra_css %}
 
 {% block content %}
 <!-- Content -->
+<section style="width: 100%;">
 <div class="m-4 p-4">
     <div class="row hero-section align-items-center">
         <!-- Left column with welcome text -->
@@ -173,7 +175,7 @@
 
                 <p>Explore our collection of sneakers and find your perfect pair today!</p>
                 <div class="d-flex justify-content-center mb-2">
-                    <a href="#" class="btn btn-dark btn-lg"><b>SHOP NOW</b></a>
+                    <a href="{% url 'catalog' %}" class="btn btn-dark btn-lg"><b>SHOP NOW</b></a>
                 </div>
         </div>
 
@@ -208,6 +210,57 @@
         </div>
     </div>
 </div>
+</section>
+
+<section>
+
+    <h1 style="text-align: center;"><b><i>The Brands You Love, All in One Place</i></b></h1><br><br>
+
+    <div class="container px-4 px-lg-5">
+        <div class="row justify-content-center g-4">
+            <div class="col-12 col-sm-8 col-md-4 col-lg-3 d-flex">
+                <a class="text-decoration-none text-body" href="#">
+                    <div class="card h-100 shadow-sm hover-effect">
+                        <img src="{% static 'images/nike-logo.jpg' %}" class="card-img-top" style="object-fit: contain; border-bottom: 2px solid #ddd;">
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <p class="card-text text-center"><b>Nike</b></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-12 col-sm-8 col-md-4 col-lg-3 d-flex">
+                <a class="text-decoration-none text-body" href="#">
+                    <div class="card h-100 shadow-sm hover-effect">
+                        <img src="{% static 'images/adidas-logo.jpg' %}" class="card-img-top" style="object-fit: contain; border-bottom: 2px solid #ddd;">
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <p class="card-text text-center"><b>Adidas</b></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-12 col-sm-8 col-md-4 col-lg-3 d-flex">
+                <a class="text-decoration-none text-body" href="#">
+                    <div class="card h-100 shadow-sm hover-effect">
+                        <img src="{% static 'images/puma-logo.jpg' %}" class="card-img-top" style="object-fit: contain; border-bottom: 2px solid #ddd;">
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <p class="card-text text-center"><b>Puma</b></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-12 col-sm-8 col-md-4 col-lg-3 d-flex">
+                <a class="text-decoration-none text-body" href="#">
+                    <div class="card h-100 shadow-sm hover-effect">
+                        <img src="{% static 'images/jordan-logo.jpg' %}" class="card-img-top" style="object-fit: contain; border-bottom: 2px solid #ddd;">
+                        <div class="card-body d-flex align-items-center justify-content-center">
+                            <p class="card-text text-center"><b>Jordan</b></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <script>
 
@@ -287,3 +340,10 @@
 
 </script>
 {% endblock content %}
+
+{% block footer %}
+<footer class="footer">
+        <p style="margin: 0;">&copy; 2025 Supa Snika by Apip</p>
+        <p style="margin: 5px 0 0;">🗣 Step into style. Supa Snika – where sneakers speak.</p>
+</footer>
+{% endblock footer %}
