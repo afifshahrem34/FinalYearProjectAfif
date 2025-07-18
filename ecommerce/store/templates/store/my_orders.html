@@ -23,7 +23,19 @@
                     <td>{{ forloop.counter }}</td>
                     <td>{{ order.date_ordered|date:"d/m/Y H:i" }}</td>
                     <td>RM{{ order.get_cart_total }}</td>
-                    <td><span class="badge bg-success">Complete</span></td>
+                   <td>
+                      {% if order.order_status == 'created' %}
+                        <span class="badge bg-info">Order Created</span>
+                      {% elif order.order_status == 'shipped' %}
+                        <span class="badge bg-warning text-dark">Shipped</span>
+                      {% elif order.order_status == 'out_for_delivery' %}
+                        <span class="badge bg-primary">Out for Delivery</span>
+                      {% elif order.order_status == 'completed' %}
+                        <span class="badge bg-success">Completed</span>
+                      {% else %}
+                        <span class="badge bg-secondary">Unknown</span>
+                      {% endif %}
+                    </td>
                     <td><i class="bi bi-caret-down-fill"></i> Click to view</td>
                 </tr>
                 <tr class="collapse" id="orderDetails{{ forloop.counter }}" style="border-bottom: 2px solid #000;">

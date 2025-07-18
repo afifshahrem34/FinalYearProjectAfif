@@ -50,10 +50,18 @@ class SneakerSize(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('created', 'Order Created'),
+        ('shipped', 'Shipped'),
+        ('out_for_delivery', 'Out for Delivery'),
+        ('completed', 'Completed'),
+    ]
+
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=100, null=True)
+    order_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created')
 
     def __str__(self):
         return str(self.id)

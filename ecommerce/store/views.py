@@ -437,6 +437,7 @@ def checkout(request):
                 order.transaction_id = transaction_id
                 order.complete = True
                 order.date_ordered = timezone.now()
+                order.order_status = 'created'
                 order.save()
 
                 # Subtract stock
