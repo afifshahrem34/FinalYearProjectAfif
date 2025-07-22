@@ -245,6 +245,7 @@ color_compatibility = {
     'other': ['black', 'white', 'gray', 'navy', 'brown']
 }
 
+
 def recommend_outfit(query_image_path, top_n=3):
     """Generates outfit recommendations based on shoe image."""
     if feature_extractor is None or features is None:
@@ -304,7 +305,12 @@ def recommend_outfit(query_image_path, top_n=3):
             } for idx in top_indices
         ]
 
+    # Sort each category's items by score descending
+    for category, items in recommendations['categories'].items():
+        recommendations['categories'][category] = sorted(items, key=lambda x: x['score'], reverse=True)
+
     return recommendations
+    
 
 if __name__ == '__main__':
     test_image_path = os.path.join(BASE_DIR, 'static', 'images', 'sneaker_catalog_1.jpg')
