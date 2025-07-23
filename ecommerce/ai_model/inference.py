@@ -68,12 +68,6 @@ def get_image_data_generators(data_dir):
     )
     return train_generator, val_generator
 
-def get_average_color(image_array, exclude_color=(255, 255, 0), tolerance=10):
-    """Calculates the average color of non-background pixels."""
-    diff = np.abs(image_array - np.array(exclude_color))
-    mask = np.all(diff < tolerance, axis=-1)
-    non_background_pixels = image_array[~mask]
-    return np.mean(non_background_pixels, axis=0).astype(int) if len(non_background_pixels) > 0 else (0, 0, 0)
 
 def replace_background(img_path, new_img_path, color=(0.0, 1.0, 1.0)):
     """Replaces background with a solid color using edge detection and contours."""
